@@ -158,12 +158,46 @@ while ($k = $sql_kategori->fetch_assoc()) {
         $tanggal_pengajuan  = $koneksi->real_escape_string($_POST['tanggal_pengajuan']);
         $status             = $koneksi->real_escape_string($_POST['status']);
         $deskripsi          = $koneksi->real_escape_string($_POST['deskripsi']);
-        $tanggal_respon          = $koneksi->real_escape_string($_POST['tanggal_respon']);
+        $tanggal_respon     = $koneksi->real_escape_string($_POST['tanggal_respon']);
+
+        // Simpan status lama untuk notifikasi
+        $status_lama = $row['status'];
 
         $submit = $koneksi->query("UPDATE konsultasi SET nip='$nip', id_kategori='$id_kategori', judul='$judul', tanggal_pengajuan='$tanggal_pengajuan', status='$status', deskripsi='$deskripsi', tanggal_respon='$tanggal_respon' WHERE id_konsultasi='$id_konsultasi'");
 
         if ($submit) {
-            $_SESSION['pesan'] = "Data Berhasil Diubah";
+            // Load Email Library
+            require_once '../../config/email.php';
+            $emailLib = new EmailLibrary();
+
+            // Kirim email notifikasi jika status berubah
+            if ($status_lama != $status) {
+                // Ambil data pegawai untuk email
+                $data_pegawai = $koneksi->query("SELECT * FROM pegawai WHERE nip = '$nip'")->fetch_assoc();
+
+                if ($data_pegawai && !empty($data_pegawai['email'])) {
+                    $kirim_email = $emailLib->kirimNotifikasiStatus(
+                        $data_pegawai['email'],
+                        $data_pegawai['nama_lengkap'],
+                        $id_konsultasi,
+                        $status_lama,
+                        $status,
+                        $judul
+                    );
+
+                    // Tambahkan pesan sukses email
+                    if ($kirim_email) {
+                        $_SESSION['pesan'] = "Data Berhasil Diubah. Email notifikasi telah dikirim ke " . $data_pegawai['email'];
+                    } else {
+                        $_SESSION['pesan'] = "Data Berhasil Diubah. Namun gagal mengirim email notifikasi.";
+                    }
+                } else {
+                    $_SESSION['pesan'] = "Data Berhasil Diubah. Tidak ada email pegawai.";
+                }
+            } else {
+                $_SESSION['pesan'] = "Data Berhasil Diubah";
+            }
+
             echo "<script>window.location.replace('../konsultasi/');</script>";
         }
     }

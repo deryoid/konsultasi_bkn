@@ -192,6 +192,25 @@ if (isset($_POST['submit'])) {
         $koneksi->query("UPDATE konsultasi SET status = 'Diproses' WHERE id_konsultasi = '$id_konsultasi'");
 
         if ($submit) {
+            // Load Email Library
+            require_once '../../config/email.php';
+            $emailLib = new EmailLibrary($koneksi);
+
+            // Ambil data konsultasi untuk notifikasi email
+            $data_konsultasi = $koneksi->query("SELECT k.*, p.nama_lengkap, p.email FROM konsultasi k LEFT JOIN pegawai p ON k.nip = p.nip WHERE k.id_konsultasi = '$id_konsultasi'")->fetch_assoc();
+            $data_konselor = $koneksi->query("SELECT nama_konselor FROM konselor WHERE id_konselor = '$id_konselor'")->fetch_assoc();
+
+            // Kirim email notifikasi respon
+            if ($data_konsultasi && !empty($data_konsultasi['email']) && $data_konselor) {
+                $kirim_email = $emailLib->kirimNotifikasiRespon(
+                    $data_konsultasi['email'],
+                    $data_konsultasi['nama_lengkap'],
+                    $id_konsultasi,
+                    $data_konselor['nama_konselor'],
+                    $isi_respon
+                );
+            }
+
             $_SESSION['pesan'] = "Data Berhasil Ditambahkan";
             echo "<script>window.location.replace('../respon_konsultasi/');</script>";
         } else {
