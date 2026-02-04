@@ -53,7 +53,9 @@ include '../../templates/head.php';
                             <div class="card card-outline">
                                 <div class="card-header">
                                     <a href="tambah.php" class="btn bg-blue"><i class="fa fa-plus-circle"> Respon Konsultasi</i></a>
-                                    <a href="print.php" target="blank" class="btn bg-dark"><i class="fa fa-print"> Cetak</i></a>
+                                    <a href="print.php" target="blank" class="btn bg-dark"><i class="fa fa-print"> Cetak Daftar Respon</i></a>
+                                    <a href="../laporan/waktu_respon.php" class="btn bg-warning"><i class="fa fa-clock"> Laporan Waktu Respon</i></a>
+                                    <a href="../laporan/cetak_waktu_respon.php" target="_blank" class="btn bg-success"><i class="fa fa-file-alt"> Cetak Laporan Waktu</i></a>
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body">

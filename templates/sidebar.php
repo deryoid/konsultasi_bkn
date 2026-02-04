@@ -18,7 +18,7 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item">
-            <a href="<?= base_url('admin/index') ?>" class="nav-link">
+            <a href="<?= base_url('admin/index.php') ?>" class="nav-link">
               <i class="nav-icon fas fa-home"></i>
               <p>
                 Home
@@ -91,7 +91,7 @@
               <p>Data Rekapitulasi Konselor</p>
             </a>
           </li>
-         
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
