@@ -115,7 +115,18 @@ include '../../templates/head.php';
                                                     <td><?= $row['nama_kategori'] ?></td>
                                                     <td><?= $row['judul'] ?></td>
                                                     <td><?= $row['tanggal_pengajuan'] ?></td>
-                                                    <td><?= $row['status'] ?></td>
+                                                    <td>
+                                                        <?php
+                                                        $status_class = '';
+                                                        switch($row['status']) {
+                                                            case 'Menunggu': $status_class = 'badge-warning'; break;
+                                                            case 'Diproses': $status_class = 'badge-info'; break;
+                                                            case 'Selesai': $status_class = 'badge-success'; break;
+                                                            default: $status_class = 'badge-secondary';
+                                                        }
+                                                        ?>
+                                                        <span class="badge <?= $status_class ?>"><?= $row['status'] ?></span>
+                                                    </td>
                                                     <td><?= $row['deskripsi'] ?></td>
                                                     <td><?= $row['tanggal_respon'] ?></td>
                                                     <td align="center">

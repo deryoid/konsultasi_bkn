@@ -130,6 +130,14 @@
         </p>
       </a>
     </li>
+    <li class="nav-item">
+      <a href="<?= base_url('user/kritik_saran/') ?>" class="nav-link">
+        <i class="nav-icon fas fa-comment-dots"></i>
+        <p>
+          Kritik & Saran
+        </p>
+      </a>
+    </li>
 
   </ul>
 </nav>

@@ -6,8 +6,9 @@ include '../../templates/head.php';
 include '../../templates/navbar.php';
 include '../../templates/sidebar.php';
 
-$id_user = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : null;
-$datau = $koneksi->query("SELECT * FROM user WHERE id_user = '" . $koneksi->real_escape_string($id_user) . "'")->fetch_array();
+$nip = isset($_SESSION['nip']) ? $_SESSION['nip'] : null;
+// Get user data by username (which is same as NIP)
+$datau = $koneksi->query("SELECT * FROM user WHERE username = '" . $koneksi->real_escape_string($nip) . "'")->fetch_array();
 ?>
 
 <div class="content-wrapper">
@@ -35,7 +36,7 @@ $datau = $koneksi->query("SELECT * FROM user WHERE id_user = '" . $koneksi->real
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label">Username</label>
                                     <div class="col-sm-3">
-                                        <input type="text" class="form-control" name="username" required="" value="<?= $datau['username'] ?>" readonly>
+                                        <input type="text" class="form-control" name="username" required="" value="<?= $datau['nip'] ?>" readonly>
                                     </div>
                                 </div>
 
@@ -56,7 +57,7 @@ $datau = $koneksi->query("SELECT * FROM user WHERE id_user = '" . $koneksi->real
 
                             <div class="card-footer">
                                 <button type="submit" name="submit" class="btn btn-success"><i class="fa fa-save mr-2"></i>Simpan</button>
-                                <a href="../info_user/" class="btn btn-default"><i class="fa fa-arrow-circle-left mr-2"></i>Batal</a>
+                                <a href="index.php" class="btn btn-default"><i class="fa fa-arrow-circle-left mr-2"></i>Batal</a>
                             </div>
                         </form>
                     </div>
@@ -94,14 +95,17 @@ include '../../templates/footer.php';
 if (isset($_POST['submit'])) {
     if (!empty($_POST['password'])) {
         $password = md5($_POST['password']);
-        $stmt = $koneksi->prepare("UPDATE user SET password = ? WHERE id_user = ?");
-        $stmt->bind_param("si", $password, $id_user);
+        // Update password in user table using username (which is same as NIP)
+        $stmt = $koneksi->prepare("UPDATE user SET password = ? WHERE username = ?");
+        $stmt->bind_param("ss", $password, $nip);
         $submit = $stmt->execute();
         $stmt->close();
 
         if ($submit) {
-            $_SESSION['pesan'] = "Data Berhasil Diubah";
-            echo "<script>window.location.replace('../info_user/');</script>";
+            $_SESSION['pesan'] = "Password Berhasil Diubah";
+            echo "<script>window.location.replace('index.php');</script>";
+        } else {
+            echo "<script>alert('Gagal mengubah password!');</script>";
         }
     } else {
         $_SESSION['pesan'] = "Password tidak diubah";

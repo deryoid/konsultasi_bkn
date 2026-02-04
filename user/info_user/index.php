@@ -46,7 +46,10 @@ $data_pegawai = [
                                 <i class="fas fa-address-card"></i> Informasi Pegawai
                             </h3>
                             <div class="card-tools">
-                                <a href="../ubahpw.php" class="btn btn-info btn-sm">
+                                <a href="edit.php" class="btn btn-success btn-sm">
+                                    <i class="fa fa-edit mr-1"></i>Edit Profil
+                                </a>
+                                <a href="ubahpw.php" class="btn btn-info btn-sm">
                                     <i class="fa fa-key mr-1"></i>Ubah Password
                                 </a>
                             </div>

@@ -153,7 +153,7 @@ $nip = $_SESSION['nip'];
         $id_kategori    = $koneksi->real_escape_string($_POST['id_kategori']);
         $judul          = $koneksi->real_escape_string($_POST['judul']);
         $tanggal_pengajuan = $koneksi->real_escape_string($_POST['tanggal_pengajuan']);
-        $status         = 'Baru'; // Status default
+        $status         = 'Menunggu'; // Status default
         $deskripsi      = $koneksi->real_escape_string($_POST['deskripsi']);
         $tanggal_respon = date('Y-m-d'); // Default tanggal respon
 

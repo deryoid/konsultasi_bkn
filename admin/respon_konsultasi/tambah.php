@@ -188,6 +188,9 @@ if (isset($_POST['submit'])) {
 
         $submit = $koneksi->query("INSERT INTO respon_konsultasi (id_respon_konsultasi, id_konsultasi, id_konselor, isi_respon, tanggal_respon, lampiran_respon) VALUES (NULL, '$id_konsultasi', '$id_konselor', '$isi_respon', '$tanggal_respon', '$lampiran_respon')");
 
+        // Update status konsultasi menjadi 'Diproses' setelah ada respon
+        $koneksi->query("UPDATE konsultasi SET status = 'Diproses' WHERE id_konsultasi = '$id_konsultasi'");
+
         if ($submit) {
             $_SESSION['pesan'] = "Data Berhasil Ditambahkan";
             echo "<script>window.location.replace('../respon_konsultasi/');</script>";

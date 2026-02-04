@@ -127,8 +127,12 @@ include '../../templates/head.php';
         $email        = $koneksi->real_escape_string($_POST['email']);
         $id_satker    = $koneksi->real_escape_string($_POST['id_satker']);
         $jabatan      = $koneksi->real_escape_string($_POST['jabatan']);
+        $file_pendukung = $_FILES['file_pendukung']['name'];
+        $target_dir = "../../assets/file_pendukung/";
+        $target_file = $target_dir . basename($file_pendukung);
+        move_uploaded_file($_FILES["file_pendukung"]["tmp_name"], $target_file);
 
-        $submit = $koneksi->query("INSERT INTO pegawai (nip, nik, nama_lengkap, email, id_satker, jabatan) VALUES ('$nip', '$nik', '$nama_lengkap', '$email', '$id_satker', '$jabatan')");
+        $submit = $koneksi->query("INSERT INTO pegawai (nip, nik, nama_lengkap, email, id_satker, jabatan, file_pendukung) VALUES ('$nip', '$nik', '$nama_lengkap', '$email', '$id_satker', '$jabatan', '$file_pendukung')");   
 
         if ($submit) {
             $_SESSION['pesan'] = "Data Berhasil Ditambahkan";

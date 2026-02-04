@@ -109,10 +109,8 @@ while ($k = $sql_kategori->fetch_assoc()) {
                                             <label class="col-sm-2 col-form-label">Status</label>
                                             <div class="col-sm-10">
                                                 <select class="form-control" name="status">
-                                                    <option value="Baru" <?= $row['status'] == 'Baru' ? 'selected' : '' ?>>Baru</option>
-                                                    <option value="Diterima" <?= $row['status'] == 'Diterima' ? 'selected' : '' ?>>Diterima</option>
-                                                    <option value="Ditolak" <?= $row['status'] == 'Ditolak' ? 'selected' : '' ?>>Ditolak</option>
-                                                    <option value="Proses" <?= $row['status'] == 'Proses' ? 'selected' : '' ?>>Proses</option>
+                                                    <option value="Menunggu" <?= $row['status'] == 'Menunggu' ? 'selected' : '' ?>>Menunggu</option>
+                                                    <option value="Diproses" <?= $row['status'] == 'Diproses' ? 'selected' : '' ?>>Diproses</option>
                                                     <option value="Selesai" <?= $row['status'] == 'Selesai' ? 'selected' : '' ?>>Selesai</option>
                                                 </select>
                                             </div>
@@ -122,7 +120,7 @@ while ($k = $sql_kategori->fetch_assoc()) {
                                             <div class="col-sm-10">
                                                 <textarea class="form-control" name="deskripsi" rows="4" required><?= htmlspecialchars($row['deskripsi']) ?></textarea>
                                                 <small class="form-text text-muted">
-                                                    <b>Notice:</b> Deskripsi ini diisi ketika status di <b>Proses</b>.<br>
+                                                    <b>Notice:</b> Deskripsi ini diisi ketika status di <b>Diproses</b>.<br>
                                                     Contoh: Anda sudah bisa melakukan konsultasi pada Tanggal : dd/mm/yyyy, di lokasi .............. pada pukul : 00:00
                                                 </small>
                                             </div>

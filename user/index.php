@@ -101,8 +101,8 @@ include '../templates/head.php';
           $nip = $_SESSION['nip'];
           $stats = $koneksi->query("SELECT
             COUNT(*) as total,
-            SUM(CASE WHEN status = 'Baru' THEN 1 ELSE 0 END) as baru,
-            SUM(CASE WHEN status = 'Diterima' THEN 1 ELSE 0 END) as diterima,
+            SUM(CASE WHEN status = 'Menunggu' THEN 1 ELSE 0 END) as menunggu,
+            SUM(CASE WHEN status = 'Diproses' THEN 1 ELSE 0 END) as diproses,
             SUM(CASE WHEN status = 'Selesai' THEN 1 ELSE 0 END) as selesai
             FROM konsultasi WHERE nip = '$nip'")->fetch_array();
           ?>
@@ -121,7 +121,7 @@ include '../templates/head.php';
             <div class="col-lg-3 col-6">
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3><?= $stats['baru'] ?></h3>
+                  <h3><?= $stats['menunggu'] ?></h3>
                   <p>Menunggu</p>
                 </div>
                 <div class="icon">
@@ -130,13 +130,13 @@ include '../templates/head.php';
               </div>
             </div>
             <div class="col-lg-3 col-6">
-              <div class="small-box bg-success">
+              <div class="small-box bg-info">
                 <div class="inner">
-                  <h3><?= $stats['diterima'] ?></h3>
-                  <p>Diterima</p>
+                  <h3><?= $stats['diproses'] ?></h3>
+                  <p>Diproses</p>
                 </div>
                 <div class="icon">
-                  <i class="fas fa-check"></i>
+                  <i class="fas fa-spinner"></i>
                 </div>
               </div>
             </div>
@@ -200,10 +200,10 @@ include '../templates/head.php';
                             <?php
                             $status_class = '';
                             switch($row['status']) {
-                              case 'Baru': $status_class = 'badge-warning'; break;
-                              case 'Diterima': $status_class = 'badge-success'; break;
-                              case 'Selesai': $status_class = 'badge-secondary'; break;
-                              default: $status_class = 'badge-info';
+                              case 'Menunggu': $status_class = 'badge-warning'; break;
+                              case 'Diproses': $status_class = 'badge-info'; break;
+                              case 'Selesai': $status_class = 'badge-success'; break;
+                              default: $status_class = 'badge-secondary';
                             }
                             ?>
                             <span class="badge <?= $status_class ?>"><?= $row['status'] ?></span>

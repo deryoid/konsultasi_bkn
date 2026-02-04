@@ -114,10 +114,8 @@ while ($row = $sql_kategori->fetch_assoc()) {
                                             <label class="col-sm-2 col-form-label">Status</label>
                                             <div class="col-sm-10">
                                                 <select class="form-control" name="status">
-                                                    <option value="Baru" selected>Baru</option>
-                                                    <option value="Diterima">Diterima</option>
-                                                    <option value="Ditolak">Ditolak</option>
-                                                    <option value="Proses">Proses</option>
+                                                    <option value="Menunggu" selected>Menunggu</option>
+                                                    <option value="Diproses">Diproses</option>
                                                     <option value="Selesai">Selesai</option>
                                                 </select>
                                             </div>
@@ -127,7 +125,7 @@ while ($row = $sql_kategori->fetch_assoc()) {
                                             <div class="col-sm-10">
                                                 <textarea class="form-control" name="deskripsi" rows="4" required></textarea>
                                                 <small class="form-text text-muted">
-                                                    <b>Notice:</b> Deskripsi ini diisi ketika status di <b>Proses</b>.<br>
+                                                    <b>Notice:</b> Deskripsi ini diisi ketika status di <b>Diproses</b>.<br>
                                                     Contoh: Anda sudah bisa melakukan konsultasi pada Tanggal : dd/mm/yyyy, di lokasi .............. pada pukul : 00:00
                                                 </small>
                                             </div>
@@ -163,7 +161,7 @@ while ($row = $sql_kategori->fetch_assoc()) {
         $id_kategori       = $koneksi->real_escape_string($_POST['id_kategori']);
         $judul             = $koneksi->real_escape_string($_POST['judul']);
         $tanggal_pengajuan = $koneksi->real_escape_string($_POST['tanggal_pengajuan']);
-        $status            = 'Baru'; // Status default
+        $status            = 'Menunggu'; // Status default
         $deskripsi         = $koneksi->real_escape_string($_POST['deskripsi']);
         $tanggal_respon         = $koneksi->real_escape_string($_POST['tanggal_respon']);
 

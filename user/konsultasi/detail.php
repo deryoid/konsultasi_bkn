@@ -68,10 +68,9 @@ $title = "Detail Konsultasi";
                                         <?php
                                         $status_class = '';
                                         switch($data['status']) {
-                                            case 'Baru': $status_class = 'badge-warning'; break;
-                                            case 'Diterima': $status_class = 'badge-success'; break;
-                                            case 'Selesai': $status_class = 'badge-secondary'; break;
-                                            case 'Proses': $status_class = 'badge-info'; break;
+                                            case 'Menunggu': $status_class = 'badge-warning'; break;
+                                            case 'Diproses': $status_class = 'badge-info'; break;
+                                            case 'Selesai': $status_class = 'badge-success'; break;
                                             default: $status_class = 'badge-secondary';
                                         }
                                         ?>

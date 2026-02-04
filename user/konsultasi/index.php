@@ -50,7 +50,7 @@ $nip = $_SESSION['nip'];
                                         Semua Konsultasi
                                     </h3>
                                     <div class="card-tools">
-                                        <a href="tambah" class="btn btn-primary btn-sm">
+                                        <a href="tambah.php" class="btn btn-primary btn-sm">
                                             <i class="fas fa-plus"></i> Buat Baru
                                         </a>
                                     </div>
@@ -85,10 +85,9 @@ $nip = $_SESSION['nip'];
                                                         // Status badge color
                                                         $status_class = '';
                                                         switch($row['status']) {
-                                                            case 'Baru': $status_class = 'badge-warning'; break;
-                                                            case 'Diterima': $status_class = 'badge-success'; break;
-                                                            case 'Selesai': $status_class = 'badge-secondary'; break;
-                                                            case 'Proses': $status_class = 'badge-info'; break;
+                                                            case 'Menunggu': $status_class = 'badge-warning'; break;
+                                                            case 'Diproses': $status_class = 'badge-info'; break;
+                                                            case 'Selesai': $status_class = 'badge-success'; break;
                                                             default: $status_class = 'badge-secondary';
                                                         }
                                                 ?>
@@ -126,7 +125,7 @@ $nip = $_SESSION['nip'];
                                                     <td colspan="7" class="text-center">
                                                         <i class="fas fa-inbox fa-3x text-muted"></i>
                                                         <p class="text-muted">Belum ada konsultasi</p>
-                                                        <a href="tambah" class="btn btn-primary">
+                                                        <a href="tambah.php" class="btn btn-primary">
                                                             <i class="fas fa-plus"></i> Buat Konsultasi
                                                         </a>
                                                     </td>
