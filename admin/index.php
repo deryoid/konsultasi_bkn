@@ -194,9 +194,6 @@ include '../templates/head.php';
                     <i class="fas fa-list"></i> Konsultasi Terbaru
                   </h3>
                   <div class="card-tools">
-                    <a href="laporan/waktu_respon.php" class="btn btn-info btn-sm">
-                      <i class="fas fa-clock"></i> Waktu Respon
-                    </a>
                     <a href="laporan/cetak_statistik.php" target="_blank" class="btn btn-dark btn-sm">
                       <i class="fas fa-print"></i> Cetak Statistik
                     </a>
