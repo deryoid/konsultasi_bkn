@@ -79,6 +79,7 @@ $title = "Kritik & Saran";
                                                     <th>Jabatan</th>
                                                     <th>Kritik</th>
                                                     <th>Saran</th>
+                                                    <th>Tanggal</th>
                                                     <th>Penilaian</th>
                                                     <th>Kontak</th>
                                                 </tr>
@@ -90,6 +91,7 @@ $title = "Kritik & Saran";
                                                     SELECT * FROM kritik_saran ORDER BY id_kritik_saran DESC
                                                 ");
                                                 while ($row = $data->fetch_array()) {
+                                                    $tanggal_tampil = !empty($row['tanggal']) ? date('d/m/Y', strtotime($row['tanggal'])) : '-';
                                                 ?>
                                                     <tr>
                                                         <td align="center"><?= $no++ ?></td>
@@ -98,6 +100,7 @@ $title = "Kritik & Saran";
                                                         <td><?= htmlspecialchars($row['jabatan']) ?></td>
                                                         <td><?= htmlspecialchars($row['kritik']) ?></td>
                                                         <td><?= htmlspecialchars($row['saran']) ?></td>
+                                                        <td align="center"><?= $tanggal_tampil ?></td>
                                                         <td>
                                                             <?php
                                                             $stars = '';

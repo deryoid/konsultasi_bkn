@@ -74,6 +74,7 @@ if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
         <thead>
             <tr align="center">
                 <th>No</th>
+                <th>Tanggal</th>
                 <th>Nama Lengkap</th>
                 <th>Instansi</th>
                 <th>Jabatan</th>
@@ -88,9 +89,11 @@ if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
         $no = 1;
         $data = $koneksi->query("SELECT * FROM kritik_saran $where_clause ORDER BY tanggal DESC, id_kritik_saran DESC");
         while ($row = $data->fetch_array()) {
+            $tanggal_tampil = !empty($row['tanggal']) ? date('d/m/Y', strtotime($row['tanggal'])) : '-';
         ?>
             <tr>
                 <td align="center"><?= $no++ ?></td>
+                <td align="center"><?= $tanggal_tampil ?></td>
                 <td><?= htmlspecialchars($row['nama_lengkap']) ?></td>
                 <td><?= htmlspecialchars($row['instansi']) ?></td>
                 <td><?= htmlspecialchars($row['jabatan']) ?></td>

@@ -372,20 +372,20 @@ $all_data->data_seek(0);
             <tr>
                 <td align="center"><?= $no++ ?></td>
                 <td>
-                    <?= date('d/m/Y', strtotime($row['tanggal'])) ?>
+                    <?= !empty($row['tanggal']) ? date('d/m/Y', strtotime($row['tanggal'])) : '-' ?>
                     <?php if (!empty($row['nip'])): ?>
-                    <br><small>NIP: <?= $row['nip'] ?></small>
+                    <br><small>NIP: <?= htmlspecialchars($row['nip']) ?></small>
                     <?php endif; ?>
                 </td>
-                <td><strong><?= $row['nama_lengkap'] ?></strong></td>
-                <td><?= $row['instansi'] ?></td>
-                <td><?= $row['jabatan'] ?></td>
+                <td><strong><?= htmlspecialchars($row['nama_lengkap']) ?></strong></td>
+                <td><?= htmlspecialchars($row['instansi']) ?></td>
+                <td><?= htmlspecialchars($row['jabatan']) ?></td>
                 <td>
                     <span class="badge <?= $badge_class ?>"><?= $bintang ?></span><br>
-                    <small><?= $row['penilaian'] ?></small>
+                    <small><?= htmlspecialchars($row['penilaian']) ?></small>
                 </td>
-                <td><?= $row['kritik'] ?></td>
-                <td><?= $row['saran'] ?></td>
+                <td><?= htmlspecialchars($row['kritik']) ?></td>
+                <td><?= htmlspecialchars($row['saran']) ?></td>
             </tr>
             <?php endwhile; ?>
         </tbody>
