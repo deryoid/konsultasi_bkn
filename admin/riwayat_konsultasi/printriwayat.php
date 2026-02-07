@@ -6,10 +6,25 @@ require '../../config/day.php';
 
 // Ambil parameter NIP dari URL
 $nip = isset($_GET['nip']) ? $_GET['nip'] : '';
+$tanggal_awal = isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : '';
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : '';
 
 // Validasi NIP
 if (empty($nip)) {
     die('Parameter NIP tidak ditemukan.');
+}
+
+// Build filter tanggal
+$where_clause = 'WHERE 1=1';
+$filter_info = '';
+if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+    $tanggal_awal_safe = $koneksi->real_escape_string($tanggal_awal);
+    $tanggal_akhir_safe = $koneksi->real_escape_string($tanggal_akhir);
+    $where_clause .= " AND r.tanggal_respon BETWEEN '$tanggal_awal_safe' AND '$tanggal_akhir_safe'";
+
+    $tgl_awal_fmt = date('d/m/Y', strtotime($tanggal_awal));
+    $tgl_akhir_fmt = date('d/m/Y', strtotime($tanggal_akhir));
+    $filter_info = "Periode Respon: $tgl_awal_fmt s/d $tgl_akhir_fmt";
 }
 
 // Ambil data pegawai berdasarkan NIP
@@ -78,6 +93,9 @@ if (!$pegawai) {
 </table>
 
 <h2>Riwayat Respon Konsultasi</h2>
+<?php if (!empty($filter_info)): ?>
+<p style="font-weight:bold;"><?= $filter_info ?></p>
+<?php endif; ?>
 <table class="respon-table">
     <thead>
         <tr>
@@ -92,12 +110,16 @@ if (!$pegawai) {
     <?php
     // Ambil semua respon konsultasi milik pegawai beserta nama konselor
     $no = 1;
+    $nip_safe = $koneksi->real_escape_string($nip);
+    $where_pegawai = " AND k.nip = '$nip_safe'";
+    $final_where = $where_clause . $where_pegawai;
+
     $respon = $koneksi->query("
         SELECT r.*, ksl.nama_konselor AS nama_konselor
         FROM respon_konsultasi r
         INNER JOIN konsultasi k ON r.id_konsultasi = k.id_konsultasi
         LEFT JOIN konselor ksl ON r.id_konselor = ksl.id_konselor
-        WHERE k.nip = '" . $koneksi->real_escape_string($nip) . "'
+        $final_where
         ORDER BY r.tanggal_respon DESC
     ");
     if ($respon->num_rows > 0):

@@ -252,9 +252,9 @@ include 'templates/head.php';
                       <td><?= htmlspecialchars($data['tanggal_respon']) ?></td>
                     </tr>
                   </table>
-                  <a href="respon_konsultasi.php?nip=<?= urlencode($nip) ?>&id_konsultasi=<?= urlencode($id_konsultasi) ?>" target="_blank" class="btn btn-primary">
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalFilterCetakRespon" data-nip="<?= urlencode($nip) ?>" data-id="<?= urlencode($id_konsultasi) ?>">
                     <i class="fas fa-print"></i> Cetak Respon Konsultasi
-                  </a>
+                  </button>
                 </div>
               <?php else: ?>
                 <div class="alert alert-danger">
@@ -276,6 +276,49 @@ include 'templates/head.php';
     <!-- End Outline Card Pencarian -->
 </section>
 
+<!-- Modal Filter Cetak Respon Konsultasi -->
+<div class="modal fade" id="modalFilterCetakRespon" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #E98B33;">
+        <h5 class="modal-title" style="color: white;">Filter Tanggal Cetak Respon</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="formCetakRespon" action="respon_konsultasi.php" method="get" target="_blank">
+        <div class="modal-body">
+          <input type="hidden" name="nip" id="inputNIP">
+          <input type="hidden" name="id_konsultasi" id="inputID">
+          <p class="text-muted mb-3">
+            <small><em>Filter ini akan mencetak semua respon dalam periode tanggal yang dipilih.</em></small>
+          </p>
+          <div class="form-group">
+            <label>Tanggal Awal</label>
+            <input type="date" name="tanggal_awal" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Tanggal Akhir</label>
+            <input type="date" name="tanggal_akhir" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-print"></i> Cetak</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <?php include 'templates/script.php'; ?>
+<script>
+$('#modalFilterCetakRespon').on('show.bs.modal', function (e) {
+  var nip = $(e.relatedTarget).data('nip');
+  var id = $(e.relatedTarget).data('id');
+  $('#inputNIP').val(nip);
+  $('#inputID').val(id);
+});
+</script>
 </body>
 </html>

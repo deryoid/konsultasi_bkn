@@ -17,6 +17,23 @@ $bln = array(
     '11' => 'November',
     '12' => 'Desember'
 );
+
+// Ambil parameter filter tanggal
+$tanggal_awal = isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : '';
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : '';
+
+// Build filter query
+$where_clause = 'WHERE 1=1';
+$filter_info = '';
+if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+    $tanggal_awal_safe = $koneksi->real_escape_string($tanggal_awal);
+    $tanggal_akhir_safe = $koneksi->real_escape_string($tanggal_akhir);
+    $where_clause .= " AND DATE(tanggal) BETWEEN '$tanggal_awal_safe' AND '$tanggal_akhir_safe'";
+
+    $tgl_awal_fmt = date('d/m/Y', strtotime($tanggal_awal));
+    $tgl_akhir_fmt = date('d/m/Y', strtotime($tanggal_akhir));
+    $filter_info = "Periode: $tgl_awal_fmt s/d $tgl_akhir_fmt";
+}
 ?>
 
 <script type="text/javascript">
@@ -50,6 +67,9 @@ $bln = array(
     <hr>
 
     <h2 style="text-align:center;">LAPORAN KRITIK & SARAN</h2>
+    <?php if (!empty($filter_info)): ?>
+    <p style="text-align:center; font-weight:bold;"><?= $filter_info ?></p>
+    <?php endif; ?>
     <table>
         <thead>
             <tr align="center">
@@ -66,7 +86,7 @@ $bln = array(
         <tbody>
         <?php
         $no = 1;
-        $data = $koneksi->query("SELECT * FROM kritik_saran ORDER BY id_kritik_saran DESC");
+        $data = $koneksi->query("SELECT * FROM kritik_saran $where_clause ORDER BY tanggal DESC, id_kritik_saran DESC");
         while ($row = $data->fetch_array()) {
         ?>
             <tr>

@@ -6,10 +6,33 @@ require '../../config/day.php';
 
 // Ambil parameter filter dari URL
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
+$tanggal_awal = isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : '';
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : '';
 
-// Validasi filter
-if (empty($filter)) {
+// Validasi filter (tanggal atau filter pencarian)
+if (empty($filter) && empty($tanggal_awal) && empty($tanggal_akhir)) {
     die('Parameter filter tidak ditemukan.');
+}
+
+// Build filter query
+$where_clause = 'WHERE 1=1';
+$filter_info = '';
+
+// Filter berdasarkan NIP/Nama
+if (!empty($filter)) {
+    $filter_safe = $koneksi->real_escape_string($filter);
+    $where_clause .= " AND (p.nip LIKE '%$filter_safe%' OR p.nama_lengkap LIKE '%$filter_safe%')";
+}
+
+// Filter berdasarkan tanggal respon
+if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+    $tanggal_awal_safe = $koneksi->real_escape_string($tanggal_awal);
+    $tanggal_akhir_safe = $koneksi->real_escape_string($tanggal_akhir);
+    $where_clause .= " AND r.tanggal_respon BETWEEN '$tanggal_awal_safe' AND '$tanggal_akhir_safe'";
+
+    $tgl_awal_fmt = date('d/m/Y', strtotime($tanggal_awal));
+    $tgl_akhir_fmt = date('d/m/Y', strtotime($tanggal_akhir));
+    $filter_info = "Periode Respon: $tgl_awal_fmt s/d $tgl_akhir_fmt";
 }
 
 // Ambil data pegawai berdasarkan filter (misal: nip)
@@ -80,6 +103,9 @@ $nip = $pegawai['nip'];
 </table>
 
 <h2>Riwayat Respon Konsultasi</h2>
+<?php if (!empty($filter_info)): ?>
+<p style="font-weight:bold;"><?= $filter_info ?></p>
+<?php endif; ?>
 <table class="respon-table">
     <thead>
         <tr>
@@ -94,12 +120,16 @@ $nip = $pegawai['nip'];
     <?php
     // Ambil semua respon konsultasi milik pegawai beserta nama konselor
     $no = 1;
+    $nip_safe = $koneksi->real_escape_string($nip);
+    $where_pegawai = " AND k.nip = '$nip_safe'";
+    $final_where = $where_clause . $where_pegawai;
+
     $respon = $koneksi->query("
         SELECT r.*, ksl.nama_konselor AS nama_konselor
         FROM respon_konsultasi r
         INNER JOIN konsultasi k ON r.id_konsultasi = k.id_konsultasi
         LEFT JOIN konselor ksl ON r.id_konselor = ksl.id_konselor
-        WHERE k.nip = '" . $koneksi->real_escape_string($nip) . "'
+        $final_where
         ORDER BY r.tanggal_respon DESC
     ");
     if ($respon->num_rows > 0):

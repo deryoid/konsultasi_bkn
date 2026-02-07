@@ -52,8 +52,8 @@ $title = "Kritik & Saran";
                                 <div class="card-header">
                                     <h3 class="card-title">Daftar Kritik & Saran</h3>
                                     <div class="card-tools">
-                                        <a href="print.php" target="blank" class="btn bg-dark"><i class="fa fa-print"> Cetak</i></a>
-                                        <a href="cetak.php" target="blank" class="btn bg-success"><i class="fa fa-chart-bar"> Cetak Rata Rata Laporan Kepuasan ASN</i></a>
+                                        <button type="button" class="btn bg-dark" data-toggle="modal" data-target="#modalFilterPrintKritik"><i class="fa fa-print"> Cetak</i></button>
+                                        <button type="button" class="btn bg-success" data-toggle="modal" data-target="#modalFilterLaporanKepuasan"><i class="fa fa-chart-bar"> Cetak Rata Rata Laporan Kepuasan ASN</i></button>
                                     </div>
                                 </div>
                                 <!-- /.card-header -->
@@ -146,6 +146,65 @@ $title = "Kritik & Saran";
     <!-- jQuery -->
     <?php include_once "../../templates/script.php"; ?>
 
+    <!-- Modal Filter Print Kritik & Saran -->
+    <div class="modal fade" id="modalFilterPrintKritik" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark">
+                    <h5 class="modal-title text-white">Filter Tanggal Cetak Kritik & Saran</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="print.php" method="get" target="_blank">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Tanggal Awal</label>
+                            <input type="date" name="tanggal_awal" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Akhir</label>
+                            <input type="date" name="tanggal_akhir" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-dark"><i class="fa fa-print"></i> Cetak</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Filter Laporan Kepuasan ASN -->
+    <div class="modal fade" id="modalFilterLaporanKepuasan" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success">
+                    <h5 class="modal-title text-white">Filter Tanggal Laporan Kepuasan ASN</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="cetak.php" method="get" target="_blank">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Tanggal Awal</label>
+                            <input type="date" name="tanggal_awal" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Akhir</label>
+                            <input type="date" name="tanggal_akhir" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success"><i class="fa fa-chart-bar"></i> Cetak Laporan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 </body>
 

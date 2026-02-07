@@ -17,6 +17,23 @@ $bln = array(
     '11' => 'November',
     '12' => 'Desember'
 );
+
+// Ambil parameter filter tanggal
+$tanggal_awal = isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : '';
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : '';
+
+// Build filter query
+$where_clause = 'WHERE 1=1';
+$filter_info = '';
+if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+    $tanggal_awal_safe = $koneksi->real_escape_string($tanggal_awal);
+    $tanggal_akhir_safe = $koneksi->real_escape_string($tanggal_akhir);
+    $where_clause .= " AND k.tanggal_pengajuan BETWEEN '$tanggal_awal_safe' AND '$tanggal_akhir_safe'";
+
+    $tgl_awal_fmt = date('d/m/Y', strtotime($tanggal_awal));
+    $tgl_akhir_fmt = date('d/m/Y', strtotime($tanggal_akhir));
+    $filter_info = "Periode Pengajuan: $tgl_awal_fmt s/d $tgl_akhir_fmt";
+}
 ?>
 
 <script type="text/javascript">
@@ -50,6 +67,9 @@ $bln = array(
     <hr>
 
     <h2 style="text-align:center;">LAPORAN DATA KONSULTASI</h2>
+    <?php if (!empty($filter_info)): ?>
+    <p style="text-align:center; font-weight:bold;"><?= $filter_info ?></p>
+    <?php endif; ?>
     <table>
         <thead>
             <tr align="center">
@@ -69,10 +89,11 @@ $bln = array(
         <?php
         $no = 1;
         $data = $koneksi->query("
-            SELECT k.*, p.nama_lengkap, p.nip, c.nama_kategori 
+            SELECT k.*, p.nama_lengkap, p.nip, c.nama_kategori
             FROM konsultasi k
             LEFT JOIN pegawai p ON k.nip = p.nip
             LEFT JOIN kategori c ON k.id_kategori = c.id_kategori
+            $where_clause
             ORDER BY k.tanggal_pengajuan DESC
         ");
         while ($row = $data->fetch_array()) {

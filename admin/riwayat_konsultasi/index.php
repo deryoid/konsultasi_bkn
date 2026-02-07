@@ -59,7 +59,7 @@ include '../../templates/head.php';
                                             </div>
                                             <button type="submit" class="btn btn-primary mr-2 mb-2 mb-md-0">Cari</button>
                                             <a href="index.php" class="btn btn-secondary mr-2 mb-2 mb-md-0">Reset</a>
-                                            <a href="print.php<?= isset($_GET['filter']) && $_GET['filter'] !== '' ? '?filter=' . urlencode($_GET['filter']) : '' ?>" target="_blank" class="btn btn-info mr-2 mb-2 mb-md-0">Print</a>
+                                            <button type="button" class="btn btn-info mr-2 mb-2 mb-md-0" data-toggle="modal" data-target="#modalFilterPrintRiwayat"><i class="fa fa-print"> Print Semua</i></button>
                                         </form>
                                     </div>
                                 </div>
@@ -149,6 +149,36 @@ include '../../templates/head.php';
     <!-- jQuery -->
     <?php include_once "../../templates/script.php"; ?>
 
+    <!-- Modal Filter Print Riwayat (Semua Pegawai) -->
+    <div class="modal fade" id="modalFilterPrintRiwayat" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title text-white">Filter Tanggal Cetak Riwayat (Semua)</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="print.php" method="get" target="_blank">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Tanggal Awal (Respon)</label>
+                            <input type="date" name="tanggal_awal" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Akhir (Respon)</label>
+                            <input type="date" name="tanggal_akhir" class="form-control" required>
+                        </div>
+                        <input type="hidden" name="filter" value="<?= isset($_GET['filter']) ? htmlspecialchars($_GET['filter']) : '' ?>">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-info"><i class="fa fa-print"></i> Cetak</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 </body>
 

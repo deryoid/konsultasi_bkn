@@ -194,9 +194,9 @@ include '../templates/head.php';
                     <i class="fas fa-list"></i> Konsultasi Terbaru
                   </h3>
                   <div class="card-tools">
-                    <a href="laporan/cetak_statistik.php" target="_blank" class="btn btn-dark btn-sm">
+                    <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#modalFilterCetakStatistik">
                       <i class="fas fa-print"></i> Cetak Statistik
-                    </a>
+                    </button>
                   </div>
                 </div>
                 <div class="card-body">
@@ -275,6 +275,36 @@ include '../templates/head.php';
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+  <!-- Modal Filter Cetak Statistik -->
+  <div class="modal fade" id="modalFilterCetakStatistik" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-dark">
+          <h5 class="modal-title text-white">Filter Tanggal Cetak Statistik</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="laporan/cetak_statistik.php" method="get" target="_blank">
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Tanggal Awal (Pengajuan)</label>
+              <input type="date" name="tanggal_awal" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label>Tanggal Akhir (Pengajuan)</label>
+              <input type="date" name="tanggal_akhir" class="form-control" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-dark"><i class="fas fa-print"></i> Cetak</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <script>
     // Data Kategori

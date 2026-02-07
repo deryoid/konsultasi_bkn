@@ -53,7 +53,7 @@ include '../../templates/head.php';
                             <div class="card card-outline">
                                 <div class="card-header">
                                     <a href="tambah.php" class="btn bg-blue"><i class="fa fa-plus-circle"> Tambah</i></a>
-                                    <a href="print.php" target="blank" class="btn bg-dark"><i class="fa fa-print"> Cetak</i></a>
+                                    <button type="button" class="btn bg-dark" data-toggle="modal" data-target="#modalFilterPrintKonsultasi"><i class="fa fa-print"> Cetak</i></button>
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body">
@@ -169,6 +169,35 @@ include '../../templates/head.php';
     <!-- jQuery -->
     <?php include_once "../../templates/script.php"; ?>
 
+    <!-- Modal Filter Print Konsultasi -->
+    <div class="modal fade" id="modalFilterPrintKonsultasi" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark">
+                    <h5 class="modal-title text-white">Filter Tanggal Cetak Konsultasi</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="print.php" method="get" target="_blank">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Tanggal Awal (Pengajuan)</label>
+                            <input type="date" name="tanggal_awal" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Akhir (Pengajuan)</label>
+                            <input type="date" name="tanggal_akhir" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-dark"><i class="fa fa-print"></i> Cetak</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 </body>
 

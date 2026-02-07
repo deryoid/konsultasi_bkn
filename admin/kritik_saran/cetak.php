@@ -2,8 +2,25 @@
 require '../../config/config.php';
 require '../../config/koneksi.php';
 
-// Ambil semua data kritik & saran
-$all_data = $koneksi->query("SELECT * FROM kritik_saran ORDER BY tanggal DESC, id_kritik_saran DESC");
+// Ambil parameter filter tanggal
+$tanggal_awal = isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : '';
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : '';
+
+// Build filter query
+$where_clause = 'WHERE 1=1';
+$filter_info = '';
+if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+    $tanggal_awal_safe = $koneksi->real_escape_string($tanggal_awal);
+    $tanggal_akhir_safe = $koneksi->real_escape_string($tanggal_akhir);
+    $where_clause .= " AND DATE(tanggal) BETWEEN '$tanggal_awal_safe' AND '$tanggal_akhir_safe'";
+
+    $tgl_awal_fmt = date('d/m/Y', strtotime($tanggal_awal));
+    $tgl_akhir_fmt = date('d/m/Y', strtotime($tanggal_akhir));
+    $filter_info = "$tgl_awal_fmt s/d $tgl_akhir_fmt";
+}
+
+// Ambil semua data kritik & saran dengan filter
+$all_data = $koneksi->query("SELECT * FROM kritik_saran $where_clause ORDER BY tanggal DESC, id_kritik_saran DESC");
 
 // Hitung statistik penilaian
 $stats_penilaian = [
@@ -233,6 +250,9 @@ $all_data->data_seek(0);
         <h1>LAPORAN KRITIK & SARAN ASN</h1>
         <h2>BADAN KEPEGAWAIAN NEGARA</h2>
         <p>Tahun: <?= date('Y') ?></p>
+        <?php if (!empty($filter_info)): ?>
+        <p style="color: #667eea; font-weight: bold;">Periode: <?= $filter_info ?></p>
+        <?php endif; ?>
     </div>
 
     <!-- Ringkasan Statistik -->

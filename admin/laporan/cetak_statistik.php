@@ -6,6 +6,23 @@ $title = "Cetak Laporan Statistik Kategori";
 
 $id = isset($_GET['id']) ? $_GET['id'] : '';
 
+// Ambil parameter filter tanggal
+$tanggal_awal = isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : '';
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : '';
+
+// Build filter query
+$where_tanggal = 'WHERE 1=1';
+$filter_info = '';
+if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+    $tanggal_awal_safe = $koneksi->real_escape_string($tanggal_awal);
+    $tanggal_akhir_safe = $koneksi->real_escape_string($tanggal_akhir);
+    $where_tanggal .= " AND k.tanggal_pengajuan BETWEEN '$tanggal_awal_safe' AND '$tanggal_akhir_safe'";
+
+    $tgl_awal_fmt = date('d/m/Y', strtotime($tanggal_awal));
+    $tgl_akhir_fmt = date('d/m/Y', strtotime($tanggal_akhir));
+    $filter_info = "Periode Pengajuan: $tgl_awal_fmt s/d $tgl_akhir_fmt";
+}
+
 // Ambil data statistik per kategori
 $stats = $koneksi->query("
     SELECT
@@ -17,14 +34,15 @@ $stats = $koneksi->query("
         SUM(CASE WHEN k.status = 'Selesai' THEN 1 ELSE 0 END) as selesai
     FROM kategori c
     LEFT JOIN konsultasi k ON c.id_kategori = k.id_kategori
+    $where_tanggal
     GROUP BY c.id_kategori
     ORDER BY jumlah DESC
 ");
 
-$total_konsultasi = $koneksi->query("SELECT COUNT(*) FROM konsultasi")->fetch_row()[0];
-$total_menunggu = $koneksi->query("SELECT COUNT(*) FROM konsultasi WHERE status = 'Menunggu'")->fetch_row()[0];
-$total_diproses = $koneksi->query("SELECT COUNT(*) FROM konsultasi WHERE status = 'Diproses'")->fetch_row()[0];
-$total_selesai = $koneksi->query("SELECT COUNT(*) FROM konsultasi WHERE status = 'Selesai'")->fetch_row()[0];
+$total_konsultasi = $koneksi->query("SELECT COUNT(*) FROM konsultasi $where_tanggal")->fetch_row()[0];
+$total_menunggu = $koneksi->query("SELECT COUNT(*) FROM konsultasi WHERE status = 'Menunggu' $where_tanggal")->fetch_row()[0];
+$total_diproses = $koneksi->query("SELECT COUNT(*) FROM konsultasi WHERE status = 'Diproses' $where_tanggal")->fetch_row()[0];
+$total_selesai = $koneksi->query("SELECT COUNT(*) FROM konsultasi WHERE status = 'Selesai' $where_tanggal")->fetch_row()[0];
 
 // Ambil data judul per kategori
 $detail_kategori = [];
@@ -35,6 +53,7 @@ $stats_result = $koneksi->query("
         COUNT(k.id_konsultasi) as jumlah
     FROM kategori c
     LEFT JOIN konsultasi k ON c.id_kategori = k.id_kategori
+    $where_tanggal
     GROUP BY c.id_kategori
     ORDER BY jumlah DESC
 ");
@@ -46,7 +65,7 @@ while ($row = $stats_result->fetch_assoc()) {
     $list_judul = $koneksi->query("
         SELECT judul, status, DATE_FORMAT(tanggal_pengajuan, '%d/%m/%Y') as tanggal
         FROM konsultasi
-        WHERE id_kategori = '$id_kategori'
+        WHERE id_kategori = '$id_kategori' $where_tanggal
         ORDER BY tanggal_pengajuan DESC
     ");
 
@@ -231,6 +250,9 @@ while ($row = $stats_result->fetch_assoc()) {
         <h1>LAPORAN STATISTIK KATEGORI KONSULTASI</h1>
         <p>Badan Kepegawaian Negara</p>
         <p>Cetak: <?php echo date('d/m/Y H:i') ?></p>
+        <?php if (!empty($filter_info)): ?>
+        <p style="color: #667eea; font-weight: bold;"><?= $filter_info ?></p>
+        <?php endif; ?>
     </div>
 
     <!-- Ringkasan Statistik -->

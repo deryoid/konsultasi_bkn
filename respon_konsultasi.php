@@ -6,10 +6,25 @@ require 'config/day.php';
 // Ambil parameter pencarian
 $nip = isset($_GET['nip']) ? trim($_GET['nip']) : '';
 $id_konsultasi = isset($_GET['id_konsultasi']) ? trim($_GET['id_konsultasi']) : '';
+$tanggal_awal = isset($_GET['tanggal_awal']) ? $_GET['tanggal_awal'] : '';
+$tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : '';
 
 // Validasi input
 if ($nip === '' && $id_konsultasi === '') {
     die('Masukkan NIP atau ID Konsultasi.');
+}
+
+// Build filter tanggal
+$where_tanggal = 'WHERE 1=1';
+$filter_info = '';
+if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+    $tanggal_awal_safe = $koneksi->real_escape_string($tanggal_awal);
+    $tanggal_akhir_safe = $koneksi->real_escape_string($tanggal_akhir);
+    $where_tanggal .= " AND r.tanggal_respon BETWEEN '$tanggal_awal_safe' AND '$tanggal_akhir_safe'";
+
+    $tgl_awal_fmt = date('d/m/Y', strtotime($tanggal_awal));
+    $tgl_akhir_fmt = date('d/m/Y', strtotime($tanggal_akhir));
+    $filter_info = "<br><small>Periode Respon: $tgl_awal_fmt s/d $tgl_akhir_fmt</small>";
 }
 
 // Bangun query pencarian
@@ -36,12 +51,16 @@ if (!$data) {
     die('Data konsultasi tidak ditemukan.');
 }
 // Ambil data respon konsultasi
-$id_konsultasi_val = $data['id_konsultasi'];
+$id_konsultasi_val = $koneksi->real_escape_string($data['id_konsultasi']);
+$where_id = " AND r.id_konsultasi = '$id_konsultasi_val'";
+$final_where = $where_tanggal . $where_id;
+
 $respon = $koneksi->query("
-    SELECT * FROM respon_konsultasi
-    LEFT JOIN konselor ON respon_konsultasi.id_konselor = konselor.id_konselor
-    WHERE id_konsultasi = '" . $koneksi->real_escape_string($id_konsultasi_val) . "'
-    ORDER BY tanggal_respon ASC
+    SELECT r.*, k.nama_konselor
+    FROM respon_konsultasi r
+    LEFT JOIN konselor k ON r.id_konselor = k.id_konselor
+    $final_where
+    ORDER BY r.tanggal_respon ASC
 ");
 ?>
 
@@ -184,7 +203,7 @@ $respon = $koneksi->query("
             <div class="alamat">Jl. Bhayangkara No.1, Banjarbaru, Kalimantan Selatan</div>
         </div>
         <hr>
-        <div class="ticket-title">TIKET KONSULTASI</div>
+        <div class="ticket-title">TIKET KONSULTASI<?= $filter_info ?></div>
         <div class="ticket-info"><span class="label">ID Konsultasi</span>: <?= $data['id_konsultasi'] ?></div>
         <div class="ticket-info"><span class="label">NIP</span>: <?= $data['nip'] ?></div>
         <div class="ticket-info"><span class="label">Nama Lengkap</span>: <?= $data['nama_lengkap'] ?></div>
@@ -209,7 +228,7 @@ $respon = $koneksi->query("
                 </div>
                 <div class="respon-row">
                     <span class="respon-label">Tanggal Respon : </span>
-                    <span class="respon-content"> <?= htmlspecialchars($row['tanggal_respon']) ?></span>
+                    <span class="respon-content"> <?= date('d/m/Y', strtotime($row['tanggal_respon'])) ?></span>
                 </div>
                 <div class="respon-row">
                     <span class="respon-label">Isi Respon : </span>

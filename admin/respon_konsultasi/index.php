@@ -53,7 +53,7 @@ include '../../templates/head.php';
                             <div class="card card-outline">
                                 <div class="card-header">
                                     <a href="tambah.php" class="btn bg-blue"><i class="fa fa-plus-circle"> Respon Konsultasi</i></a>
-                                    <a href="print.php" target="blank" class="btn bg-dark"><i class="fa fa-print"> Cetak Daftar Respon</i></a>
+                                    <button type="button" class="btn bg-dark" data-toggle="modal" data-target="#modalFilterPrintRespon"><i class="fa fa-print"> Cetak Daftar Respon</i></button>
                                     <a href="../laporan/waktu_respon.php" class="btn bg-warning"><i class="fa fa-clock"> Laporan Waktu Respon</i></a>
                                 </div>
                                 <!-- /.card-header -->
@@ -172,6 +172,35 @@ include '../../templates/head.php';
     <!-- jQuery -->
     <?php include_once "../../templates/script.php"; ?>
 
+    <!-- Modal Filter Print Respon Konsultasi -->
+    <div class="modal fade" id="modalFilterPrintRespon" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-dark">
+                    <h5 class="modal-title text-white">Filter Tanggal Cetak Respon</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="print.php" method="get" target="_blank">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Tanggal Awal (Respon)</label>
+                            <input type="date" name="tanggal_awal" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Akhir (Respon)</label>
+                            <input type="date" name="tanggal_akhir" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-dark"><i class="fa fa-print"></i> Cetak</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 </body>
 
