@@ -90,20 +90,11 @@ include '../../templates/head.php';
                                                 $where = '';
                                                 $warn = '';
                                                 if (isset($_SESSION['role']) && $_SESSION['role'] === 'Konselor') {
-                                                    $check = $koneksi->query("SHOW TABLES LIKE 'konselor_user'");
-                                                    if ($check && $check->num_rows > 0) {
-                                                        $uid = $koneksi->real_escape_string($_SESSION['id_user']);
-                                                        $map = $koneksi->query("SELECT id_konselor FROM konselor_user WHERE id_user = '$uid' LIMIT 1");
-                                                        if ($map && $map->num_rows > 0) {
-                                                            $mk = $map->fetch_assoc();
-                                                            $idk = $koneksi->real_escape_string($mk['id_konselor']);
-                                                            $where = "WHERE r.id_konselor = '".$idk."'";
-                                                        } else {
-                                                            $warn = 'Akun Konselor belum dipetakan ke data konselor (tabel konselor_user). Hubungi Admin.';
-                                                            $where = "WHERE 1=0";
-                                                        }
+                                                    if (isset($_SESSION['id_konselor'])) {
+                                                        $idk = $koneksi->real_escape_string($_SESSION['id_konselor']);
+                                                        $where = "WHERE r.id_konselor = '".$idk."'";
                                                     } else {
-                                                        $warn = 'Tabel konselor_user belum tersedia. Admin perlu membuat pemetaan akun ke konselor.';
+                                                        $warn = 'Akun Konselor belum dipetakan ke data konselor. Hubungi Admin.';
                                                         $where = "WHERE 1=0";
                                                     }
                                                 }

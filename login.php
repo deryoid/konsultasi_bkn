@@ -32,15 +32,18 @@ require 'config/config.php';
     <!-- /.login-logo -->
     <div class="card">
       <div class="login-logo">
-          <img src="<?= base_url() ?>/assets/dist/img/LOGO_BKN.png" style="margin-top: 20px; margin-bottom: 20px;" width="134px;" height="180px;">
-          <!-- <h4 style="color: #E98B33; font-family:Impact, Luminari, Chalkduster">LOGIN APLIKASI</h4> -->
+        <img src="<?= base_url() ?>/assets/dist/img/LOGO_BKN.png" style="margin-top: 20px; margin-bottom: 20px;"
+          width="134px;" height="180px;">
+        <!-- <h4 style="color: #E98B33; font-family:Impact, Luminari, Chalkduster">LOGIN APLIKASI</h4> -->
       </div>
       <div class="card-body login-card-body">
         <!-- <p class="login-box-msg">Sign in to start your session</p> -->
         <?php if (isset($_SESSION['pesan']) && $_SESSION['pesan'] <> '') { ?>
-          <div class="alert alert-danger success-alert" role="alert">
-            <small><i class="fa fa-check"> <?= $_SESSION['pesan']; ?></i></small>
-          </div>
+        <div class="alert alert-danger success-alert" role="alert">
+          <small><i class="fa fa-check">
+              <?= $_SESSION['pesan']; ?>
+            </i></small>
+        </div>
         <?php $_SESSION['pesan'] = '';
         } ?>
 
@@ -62,8 +65,10 @@ require 'config/config.php';
             </div>
           </div>
 
-          <button type="submit" name="submit" class="btn btn-block btn-xm" style="background-color:  #E98B33; color:aliceblue;"><i class="fa fa-sign-in-alt mr-1"></i>Masuk</button>
-          <a type="submit" href="index.php" class="btn btn-block btn-xm" style="background-color:  #E98B33; color:aliceblue;"><i class="fa fa-backspace mr-1"></i>Kembali</a>
+          <button type="submit" name="submit" class="btn btn-block btn-xm"
+            style="background-color:  #E98B33; color:aliceblue;"><i class="fa fa-sign-in-alt mr-1"></i>Masuk</button>
+          <a type="submit" href="index.php" class="btn btn-block btn-xm"
+            style="background-color:  #E98B33; color:aliceblue;"><i class="fa fa-backspace mr-1"></i>Kembali</a>
           <br>
         </form>
 
@@ -81,8 +86,8 @@ require 'config/config.php';
   <script src="<?= base_url() ?>/assets/dist/js/adminlte.min.js"></script>
 
   <script>
-    $(function() {
-      setTimeout(function() {
+    $(function () {
+      setTimeout(function () {
         $(".success-alert").slideUp();
       }, 1500);
     });
@@ -146,17 +151,12 @@ if (isset($_POST['submit'])) {
         $_SESSION['nama_user'] = $nama_user;
         $_SESSION['id_user'] = $id_user;
         $_SESSION['role'] = $role;
-        // Optional: map id_konselor jika tabel konselor_user tersedia
-        if ($koneksi) {
-          $check = $koneksi->query("SHOW TABLES LIKE 'konselor_user'");
-          if ($check && $check->num_rows > 0) {
-            $id_user_safe = $koneksi->real_escape_string($id_user);
-            $map = $koneksi->query("SELECT id_konselor FROM konselor_user WHERE id_user = '$id_user_safe' LIMIT 1");
-            if ($map && $map->num_rows > 0) {
-              $mk = $map->fetch_assoc();
-              $_SESSION['id_konselor'] = $mk['id_konselor'];
-            }
-          }
+        // Ambil id_konselor langsung dari kolom id_user di tabel konselor
+        $id_user_safe = $koneksi->real_escape_string($id_user);
+        $map = $koneksi->query("SELECT id_konselor FROM konselor WHERE id_user = '$id_user_safe' LIMIT 1");
+        if ($map && $map->num_rows > 0) {
+          $mk = $map->fetch_assoc();
+          $_SESSION['id_konselor'] = $mk['id_konselor'];
         }
         echo "<script>window.location.replace('admin/respon_konsultasi/');</script>";
       } 

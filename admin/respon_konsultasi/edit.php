@@ -14,15 +14,9 @@ $row = $data->fetch_assoc();
 // Batasi akses Konselor hanya ke respon miliknya
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'Konselor' && $row) {
     $allowed = false;
-    $check = $koneksi->query("SHOW TABLES LIKE 'konselor_user'");
-    if ($check && $check->num_rows > 0) {
-        $uid = $koneksi->real_escape_string($_SESSION['id_user']);
-        $map = $koneksi->query("SELECT id_konselor FROM konselor_user WHERE id_user = '$uid' LIMIT 1");
-        if ($map && $map->num_rows > 0) {
-            $mk = $map->fetch_assoc();
-            if ($row['id_konselor'] == $mk['id_konselor']) {
-                $allowed = true;
-            }
+    if (isset($_SESSION['id_konselor'])) {
+        if ($row['id_konselor'] == $_SESSION['id_konselor']) {
+            $allowed = true;
         }
     }
     if (!$allowed) {
@@ -107,10 +101,9 @@ while ($r = $sql_konselor->fetch_assoc()) {
                                             <?php
                                             $konselor_lock_id = null; $konselor_lock_nama = null;
                                             if (isset($_SESSION['role']) && $_SESSION['role'] === 'Konselor') {
-                                                $check = $koneksi->query("SHOW TABLES LIKE 'konselor_user'");
-                                                if ($check && $check->num_rows > 0) {
-                                                    $uid = $koneksi->real_escape_string($_SESSION['id_user']);
-                                                    $map = $koneksi->query("SELECT ku.id_konselor, k.nama_konselor FROM konselor_user ku JOIN konselor k ON k.id_konselor = ku.id_konselor WHERE ku.id_user = '$uid' LIMIT 1");
+                                                if (isset($_SESSION['id_konselor'])) {
+                                                    $idk = $koneksi->real_escape_string($_SESSION['id_konselor']);
+                                                    $map = $koneksi->query("SELECT id_konselor, nama_konselor FROM konselor WHERE id_konselor = '$idk' LIMIT 1");
                                                     if ($map && $map->num_rows > 0) { $mk = $map->fetch_assoc(); $konselor_lock_id = $mk['id_konselor']; $konselor_lock_nama = $mk['nama_konselor']; }
                                                 }
                                             }
@@ -184,11 +177,8 @@ if (isset($_POST['submit'])) {
     $id_konselor_post = isset($_POST['id_konselor']) ? $_POST['id_konselor'] : '';
     if (isset($_SESSION['role']) && $_SESSION['role'] === 'Konselor') {
         $lock_id = null;
-        $check = $koneksi->query("SHOW TABLES LIKE 'konselor_user'");
-        if ($check && $check->num_rows > 0) {
-            $uid = $koneksi->real_escape_string($_SESSION['id_user']);
-            $map = $koneksi->query("SELECT id_konselor FROM konselor_user WHERE id_user = '$uid' LIMIT 1");
-            if ($map && $map->num_rows > 0) { $mk = $map->fetch_assoc(); $lock_id = $mk['id_konselor']; }
+        if (isset($_SESSION['id_konselor'])) {
+            $lock_id = $_SESSION['id_konselor'];
         }
         if ($lock_id) { $id_konselor_post = $lock_id; }
     }

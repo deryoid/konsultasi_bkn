@@ -497,14 +497,14 @@ endwhile; ?>
 
     <script>
         // Auto print saat halaman dimuat
-        window.onl oad = function () {
+        window.onload = function () {
             window.print();
         };
 
         // Tutup window setelah print
-        window.onafterp rint = function () {
-            window.clos
-                ;
+        window.onafterprint = function () {
+            window.close();
+        };
     </script>
 </body>
 

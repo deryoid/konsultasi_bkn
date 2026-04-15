@@ -30,10 +30,9 @@ while ($row = $sql_konselor->fetch_assoc()) {
 $konselor_lock_id = null;
 $konselor_lock_nama = null;
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'Konselor') {
-    $check = $koneksi->query("SHOW TABLES LIKE 'konselor_user'");
-    if ($check && $check->num_rows > 0) {
-        $uid = $koneksi->real_escape_string($_SESSION['id_user']);
-        $map = $koneksi->query("SELECT ku.id_konselor, k.nama_konselor FROM konselor_user ku JOIN konselor k ON k.id_konselor = ku.id_konselor WHERE ku.id_user = '$uid' LIMIT 1");
+    if (isset($_SESSION['id_konselor'])) {
+        $idk = $koneksi->real_escape_string($_SESSION['id_konselor']);
+        $map = $koneksi->query("SELECT id_konselor, nama_konselor FROM konselor WHERE id_konselor = '$idk' LIMIT 1");
         if ($map && $map->num_rows > 0) {
             $mk = $map->fetch_assoc();
             $konselor_lock_id = $mk['id_konselor'];

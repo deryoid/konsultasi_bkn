@@ -2,6 +2,15 @@
 require '../../config/config.php';
 require '../../config/koneksi.php';
 
+// Ambil daftar user dengan role Konselor yang belum ditautkan ke konselor manapun
+$users_konselor = $koneksi->query("
+    SELECT u.id_user, u.nama_user, u.username 
+    FROM user u
+    WHERE u.role = 'Konselor'
+    AND u.id_user NOT IN (SELECT id_user FROM konselor WHERE id_user IS NOT NULL)
+    ORDER BY u.nama_user
+");
+
 $title = "Konselor";
 ?>
 <!DOCTYPE html>
@@ -60,7 +69,8 @@ include '../../templates/head.php';
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Jabatan Konselor</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" name="jabatan_konselor" required>
+                                                <input type="text" class="form-control" name="jabatan_konselor"
+                                                    required>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -79,10 +89,32 @@ include '../../templates/head.php';
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Akun User (Login) <small
+                                                    class="text-muted">opsional</small></label>
+                                            <div class="col-sm-10">
+                                                <select class="form-control" name="id_user">
+                                                    <option value="">-- Belum Ditautkan --</option>
+                                                    <?php while ($u = $users_konselor->fetch_assoc()): ?>
+                                                    <option value="<?= $u['id_user']?>">
+                                                        <?= htmlspecialchars($u['nama_user'])?> (
+                                                        <?= htmlspecialchars($u['username'])?>)
+                                                    </option>
+                                                    <?php
+endwhile; ?>
+                                                </select>
+                                                <small class="text-muted">Pilih akun user ber-role "Konselor" untuk
+                                                    ditautkan. Konselor dapat login menggunakan akun ini.</small>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="card-footer" style="background-color: white;">
-                                        <a href="<?= base_url('admin/konselor/') ?>" class="btn bg-gradient-secondary float-right"><i class="fa fa-arrow-left"> Batal</i></a>
-                                        <button type="submit" name="submit" class="btn bg-gradient-primary float-right mr-2"><i class="fa fa-save"> Simpan</i></button>
+                                        <a href="<?= base_url('admin/konselor/')?>"
+                                            class="btn bg-gradient-secondary float-right"><i class="fa fa-arrow-left">
+                                                Batal</i></a>
+                                        <button type="submit" name="submit"
+                                            class="btn bg-gradient-primary float-right mr-2"><i class="fa fa-save">
+                                                Simpan</i></button>
                                     </div>
                                 </div>
                             </div>
@@ -98,19 +130,22 @@ include '../../templates/head.php';
     <?php include_once "../../templates/script.php"; ?>
 
     <?php
-    if (isset($_POST['submit'])) {
-        $nama_konselor    = $koneksi->real_escape_string($_POST['nama_konselor']);
-        $jabatan_konselor = $koneksi->real_escape_string($_POST['jabatan_konselor']);
-        $keahlian         = $koneksi->real_escape_string($_POST['keahlian']);
-        $status           = $koneksi->real_escape_string($_POST['status']);
+if (isset($_POST['submit'])) {
+    $nama_konselor = $koneksi->real_escape_string($_POST['nama_konselor']);
+    $jabatan_konselor = $koneksi->real_escape_string($_POST['jabatan_konselor']);
+    $keahlian = $koneksi->real_escape_string($_POST['keahlian']);
+    $status = $koneksi->real_escape_string($_POST['status']);
+    $id_user = !empty($_POST['id_user']) ? (int)$_POST['id_user'] : 'NULL';
 
-        $submit = $koneksi->query("INSERT INTO konselor (id_konselor, nama_konselor, jabatan_konselor, keahlian, status) VALUES (NULL,'$nama_konselor', '$jabatan_konselor', '$keahlian', '$status')");
+    $id_user_val = ($id_user === 'NULL') ? 'NULL' : "'$id_user'";
+    $submit = $koneksi->query("INSERT INTO konselor (id_konselor, nama_konselor, jabatan_konselor, keahlian, status, id_user) VALUES (NULL,'$nama_konselor', '$jabatan_konselor', '$keahlian', '$status', $id_user_val)");
 
-        if ($submit) {
-            $_SESSION['pesan'] = "Data Berhasil Ditambahkan";
-            echo "<script>window.location.replace('../konselor/');</script>";
-        }
+    if ($submit) {
+        $_SESSION['pesan'] = "Data Berhasil Ditambahkan";
+        echo "<script>window.location.replace('../konselor/');</script>";
     }
-    ?>
+}
+?>
 </body>
+
 </html>

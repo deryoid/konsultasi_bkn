@@ -10,6 +10,18 @@ $id = isset($_GET['id']) ? $koneksi->real_escape_string($_GET['id']) : '';
 // Ambil data konselor berdasarkan id
 $data = $koneksi->query("SELECT * FROM konselor WHERE id_konselor = '$id'");
 $row = $data->fetch_assoc();
+
+// Ambil daftar user role Konselor (yang belum ditautkan ATAU yang sudah ditautkan ke konselor ini)
+$users_konselor = $koneksi->query("
+    SELECT u.id_user, u.nama_user, u.username 
+    FROM user u
+    WHERE u.role = 'Konselor'
+    AND (
+        u.id_user NOT IN (SELECT id_user FROM konselor WHERE id_user IS NOT NULL)
+        OR u.id_user = '" . (int)($row['id_user'] ?? 0) . "'
+    )
+    ORDER BY u.nama_user
+");
 ?>
 <!DOCTYPE html>
 <html>
@@ -59,19 +71,22 @@ $row = $data->fetch_assoc();
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Nama Konselor</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" name="nama_konselor" value="<?= htmlspecialchars($row['nama_konselor']) ?>" required>
+                                                <input type="text" class="form-control" name="nama_konselor"
+                                                    value="<?= htmlspecialchars($row['nama_konselor'])?>" required>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Jabatan Konselor</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" name="jabatan_konselor" value="<?= htmlspecialchars($row['jabatan_konselor']) ?>" required>
+                                                <input type="text" class="form-control" name="jabatan_konselor"
+                                                    value="<?= htmlspecialchars($row['jabatan_konselor'])?>" required>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Keahlian</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" name="keahlian" value="<?= htmlspecialchars($row['keahlian']) ?>" required>
+                                                <input type="text" class="form-control" name="keahlian"
+                                                    value="<?= htmlspecialchars($row['keahlian'])?>" required>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -79,15 +94,39 @@ $row = $data->fetch_assoc();
                                             <div class="col-sm-10">
                                                 <select class="form-control" name="status" required>
                                                     <option value="">-- Pilih Status --</option>
-                                                    <option value="Aktif" <?= $row['status'] == 'Aktif' ? 'selected' : '' ?>>Aktif</option>
-                                                    <option value="Tidak Aktif" <?= $row['status'] == 'Tidak Aktif' ? 'selected' : '' ?>>Tidak Aktif</option>
+                                                    <option value="Aktif" <?=$row['status']=='Aktif' ? 'selected' : ''?>>Aktif</option>
+                                                    <option value="Tidak Aktif" <?=$row['status']=='Tidak Aktif'
+                                                        ? 'selected' : ''?>>Tidak Aktif</option>
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Akun User (Login) <small
+                                                    class="text-muted">opsional</small></label>
+                                            <div class="col-sm-10">
+                                                <select class="form-control" name="id_user">
+                                                    <option value="">-- Belum Ditautkan --</option>
+                                                    <?php while ($u = $users_konselor->fetch_assoc()): ?>
+                                                    <option value="<?= $u['id_user']?>"
+                                                        <?=($row['id_user']==$u['id_user']) ? 'selected' : ''?>>
+                                                        <?= htmlspecialchars($u['nama_user'])?> (
+                                                        <?= htmlspecialchars($u['username'])?>)
+                                                    </option>
+                                                    <?php
+endwhile; ?>
+                                                </select>
+                                                <small class="text-muted">Pilih akun user ber-role "Konselor" untuk
+                                                    ditautkan. Konselor dapat login menggunakan akun ini.</small>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="card-footer" style="background-color: white;">
-                                        <a href="<?= base_url('admin/konselor/') ?>" class="btn bg-gradient-secondary float-right"><i class="fa fa-arrow-left"> Batal</i></a>
-                                        <button type="submit" name="submit" class="btn bg-gradient-primary float-right mr-2"><i class="fa fa-save"> Simpan</i></button>
+                                        <a href="<?= base_url('admin/konselor/')?>"
+                                            class="btn bg-gradient-secondary float-right"><i class="fa fa-arrow-left">
+                                                Batal</i></a>
+                                        <button type="submit" name="submit"
+                                            class="btn bg-gradient-primary float-right mr-2"><i class="fa fa-save">
+                                                Simpan</i></button>
                                     </div>
                                 </div>
                             </div>
@@ -103,19 +142,22 @@ $row = $data->fetch_assoc();
     <?php include_once "../../templates/script.php"; ?>
 
     <?php
-    if (isset($_POST['submit'])) {
-        $nama_konselor    = $koneksi->real_escape_string($_POST['nama_konselor']);
-        $jabatan_konselor = $koneksi->real_escape_string($_POST['jabatan_konselor']);
-        $keahlian         = $koneksi->real_escape_string($_POST['keahlian']);
-        $status           = $koneksi->real_escape_string($_POST['status']);
+if (isset($_POST['submit'])) {
+    $nama_konselor = $koneksi->real_escape_string($_POST['nama_konselor']);
+    $jabatan_konselor = $koneksi->real_escape_string($_POST['jabatan_konselor']);
+    $keahlian = $koneksi->real_escape_string($_POST['keahlian']);
+    $status = $koneksi->real_escape_string($_POST['status']);
+    $id_user = !empty($_POST['id_user']) ? (int)$_POST['id_user'] : null;
 
-        $submit = $koneksi->query("UPDATE konselor SET nama_konselor='$nama_konselor', jabatan_konselor='$jabatan_konselor', keahlian='$keahlian', status='$status' WHERE id_konselor='$id'");
+    $id_user_val = is_null($id_user) ? 'NULL' : "'$id_user'";
+    $submit = $koneksi->query("UPDATE konselor SET nama_konselor='$nama_konselor', jabatan_konselor='$jabatan_konselor', keahlian='$keahlian', status='$status', id_user=$id_user_val WHERE id_konselor='$id'");
 
-        if ($submit) {
-            $_SESSION['pesan'] = "Data Berhasil Diubah";
-            echo "<script>window.location.replace('../konselor/');</script>";
-        }
+    if ($submit) {
+        $_SESSION['pesan'] = "Data Berhasil Diubah";
+        echo "<script>window.location.replace('../konselor/');</script>";
     }
-    ?>
+}
+?>
 </body>
+
 </html>

@@ -52,17 +52,21 @@ include '../../templates/head.php';
                         <div class="col-12">
                             <div class="card card-outline">
                                 <div class="card-header">
-                                    <a href="tambah.php" class="btn bg-blue"><i class="fa fa-plus-circle"> Tambah</i></a>
-                                    <a href="print.php" target="blank" class="btn bg-dark"><i class="fa fa-print"> Cetak</i></a>
+                                    <a href="tambah.php" class="btn bg-blue"><i class="fa fa-plus-circle">
+                                            Tambah</i></a>
+                                    <a href="print.php" target="blank" class="btn bg-dark"><i class="fa fa-print">
+                                            Cetak</i></a>
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body">
                                     <?php
                                     if (isset($_SESSION['pesan']) && $_SESSION['pesan'] <> '') {
                                     ?>
-                                        <div class="alert alert-info alertinfo" role="alert">
-                                            <i class="fa fa-check-circle"> <?= $_SESSION['pesan']; ?></i>
-                                        </div>
+                                    <div class="alert alert-info alertinfo" role="alert">
+                                        <i class="fa fa-check-circle">
+                                            <?= $_SESSION['pesan']; ?>
+                                        </i>
+                                    </div>
                                     <?php
                                         $_SESSION['pesan'] = '';
                                     }
@@ -76,28 +80,58 @@ include '../../templates/head.php';
                                                     <th>Nama Konselor</th>
                                                     <th>Jabatan Konselor</th>
                                                     <th>Keahlian</th>
+                                                    <th>Akun User</th>
                                                     <th>Status</th>
                                                     <th>Opsi</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            <?php
+                                                <?php
                                             $no = 1;
-                                            $data = $koneksi->query("SELECT * FROM konselor ORDER BY id_konselor DESC");
+                                            $data = $koneksi->query("
+                                                SELECT k.*, u.username, u.nama_user 
+                                                FROM konselor k
+                                                LEFT JOIN user u ON k.id_user = u.id_user
+                                                ORDER BY k.id_konselor DESC
+                                            ");
                                             while ($row = $data->fetch_array()) {
                                             ?>
                                                 <tr>
-                                                    <td align="center"><?= $no++ ?></td>
-                                                    <td><?= $row['nama_konselor'] ?></td>
-                                                    <td><?= $row['jabatan_konselor'] ?></td>
-                                                    <td><?= $row['keahlian'] ?></td>
-                                                    <td><?= $row['status'] ?></td>
                                                     <td align="center">
-                                                        <a href="edit.php?id=<?= $row['id_konselor'] ?>" class="btn btn-success btn-sm" title="Edit"><i class="fa fa-edit"></i></a>
-                                                        <a href="hapus.php?id=<?= $row['id_konselor'] ?>" class="btn btn-danger btn-sm alert-hapus" title="Hapus"><i class="fa fa-trash"></i></a>
+                                                        <?= $no++ ?>
+                                                    </td>
+                                                    <td>
+                                                        <?= $row['nama_konselor'] ?>
+                                                    </td>
+                                                    <td>
+                                                        <?= $row['jabatan_konselor'] ?>
+                                                    </td>
+                                                    <td>
+                                                        <?= $row['keahlian'] ?>
+                                                    </td>
+                                                    <td align="center">
+                                                        <?php if ($row['username']): ?>
+                                                        <span class="badge badge-success"><i class="fas fa-link"></i>
+                                                            <?= htmlspecialchars($row['username']) ?>
+                                                        </span>
+                                                        <?php else: ?>
+                                                        <span class="badge badge-secondary"><i
+                                                                class="fas fa-unlink"></i> Belum Ditautkan</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td align="center">
+                                                        <?= $row['status'] ?>
+                                                    </td>
+                                                    <td align="center">
+                                                        <a href="edit.php?id=<?= $row['id_konselor'] ?>"
+                                                            class="btn btn-success btn-sm" title="Edit"><i
+                                                                class="fa fa-edit"></i></a>
+                                                        <a href="hapus.php?id=<?= $row['id_konselor'] ?>"
+                                                            class="btn btn-danger btn-sm alert-hapus" title="Hapus"><i
+                                                                class="fa fa-trash"></i></a>
                                                     </td>
                                                 </tr>
-                                            <?php } ?>
+                                                <?php } ?>
                                             </tbody>
                                         </table>
                                     </div>
