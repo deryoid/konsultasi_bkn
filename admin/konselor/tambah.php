@@ -80,6 +80,15 @@ include '../../templates/head.php';
                                             </div>
                                         </div>
                                         <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Email</label>
+                                            <div class="col-sm-10">
+                                                <input type="email" class="form-control" name="email" placeholder="email@contoh.com">
+                                                <small class="form-text text-muted">
+                                                    Email digunakan untuk mengirim notifikasi pengajuan konsultasi baru.
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Status</label>
                                             <div class="col-sm-10">
                                                 <select class="form-control" name="status" required>
@@ -134,11 +143,12 @@ if (isset($_POST['submit'])) {
     $nama_konselor = $koneksi->real_escape_string($_POST['nama_konselor']);
     $jabatan_konselor = $koneksi->real_escape_string($_POST['jabatan_konselor']);
     $keahlian = $koneksi->real_escape_string($_POST['keahlian']);
+    $email = $koneksi->real_escape_string($_POST['email'] ?? '');
     $status = $koneksi->real_escape_string($_POST['status']);
     $id_user = !empty($_POST['id_user']) ? (int)$_POST['id_user'] : 'NULL';
 
     $id_user_val = ($id_user === 'NULL') ? 'NULL' : "'$id_user'";
-    $submit = $koneksi->query("INSERT INTO konselor (id_konselor, nama_konselor, jabatan_konselor, keahlian, status, id_user) VALUES (NULL,'$nama_konselor', '$jabatan_konselor', '$keahlian', '$status', $id_user_val)");
+    $submit = $koneksi->query("INSERT INTO konselor (id_konselor, nama_konselor, jabatan_konselor, keahlian, email, status, id_user) VALUES (NULL,'$nama_konselor', '$jabatan_konselor', '$keahlian', '$email', '$status', $id_user_val)");
 
     if ($submit) {
         $_SESSION['pesan'] = "Data Berhasil Ditambahkan";

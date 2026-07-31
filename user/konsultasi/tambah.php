@@ -11,6 +11,13 @@ while ($row = $sql_kategori->fetch_assoc()) {
     $kategori[] = $row;
 }
 
+// Ambil data konselor aktif untuk dropdown
+$konselor_list = [];
+$sql_konselor = $koneksi->query("SELECT id_konselor, nama_konselor, jabatan_konselor, keahlian FROM konselor WHERE status = 'Aktif' ORDER BY nama_konselor ASC");
+while ($row = $sql_konselor->fetch_assoc()) {
+    $konselor_list[] = $row;
+}
+
 // NIP dari session
 $nip = $_SESSION['nip'];
 ?>
@@ -112,6 +119,23 @@ $nip = $_SESSION['nip'];
                                         </div>
 
                                         <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Konselor</label>
+                                            <div class="col-sm-10">
+                                                <select class="form-control select2" name="id_konselor" required>
+                                                    <option value="">-- Pilih Konselor --</option>
+                                                    <?php foreach ($konselor_list as $k): ?>
+                                                        <option value="<?= htmlspecialchars($k['id_konselor']) ?>">
+                                                            <?= htmlspecialchars($k['nama_konselor']) ?> - <?= htmlspecialchars($k['jabatan_konselor']) ?> (<?= htmlspecialchars($k['keahlian']) ?>)
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <small class="form-text text-muted">
+                                                    Pilih konselor yang sesuai dengan kebutuhan konsultasi Anda
+                                                </small>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Deskripsi</label>
                                             <div class="col-sm-10">
                                                 <textarea class="form-control" name="deskripsi" rows="5" placeholder="Jelaskan detail konsultasi Anda..." required></textarea>
@@ -149,17 +173,45 @@ $nip = $_SESSION['nip'];
 
     <?php
     if (isset($_POST['submit'])) {
-        $id_konsultasi  = $koneksi->real_escape_string($_POST['id_konsultasi']);
-        $id_kategori    = $koneksi->real_escape_string($_POST['id_kategori']);
-        $judul          = $koneksi->real_escape_string($_POST['judul']);
+        $id_konsultasi     = $koneksi->real_escape_string($_POST['id_konsultasi']);
+        $id_kategori       = $koneksi->real_escape_string($_POST['id_kategori']);
+        $id_konselor       = !empty($_POST['id_konselor']) ? (int)$_POST['id_konselor'] : null;
+        $judul             = $koneksi->real_escape_string($_POST['judul']);
         $tanggal_pengajuan = $koneksi->real_escape_string($_POST['tanggal_pengajuan']);
-        $status         = 'Menunggu'; // Status default
-        $deskripsi      = $koneksi->real_escape_string($_POST['deskripsi']);
-        $tanggal_respon = date('Y-m-d'); // Default tanggal respon
+        $status            = 'Menunggu'; // Status default
+        $deskripsi         = $koneksi->real_escape_string($_POST['deskripsi']);
+        $tanggal_respon    = date('Y-m-d'); // Default tanggal respon
 
-        $submit = $koneksi->query("INSERT INTO konsultasi (id_konsultasi, nip, id_kategori, judul, tanggal_pengajuan, status, deskripsi, tanggal_respon) VALUES ('$id_konsultasi', '$nip', '$id_kategori', '$judul', '$tanggal_pengajuan', '$status', '$deskripsi', '$tanggal_respon')");
+        $id_konselor_val = is_null($id_konselor) ? 'NULL' : "'$id_konselor'";
+
+        $submit = $koneksi->query("INSERT INTO konsultasi (id_konsultasi, nip, id_kategori, id_konselor, judul, tanggal_pengajuan, status, deskripsi, tanggal_respon) VALUES ('$id_konsultasi', '$nip', '$id_kategori', $id_konselor_val, '$judul', '$tanggal_pengajuan', '$status', '$deskripsi', '$tanggal_respon')");
 
         if ($submit) {
+            // Kirim email notifikasi ke konselor yang dipilih
+            if ($id_konselor) {
+                require_once '../../config/email.php';
+                $emailLib = new EmailLibrary();
+
+                // Ambil data konselor (nama + email)
+                $id_konselor_safe = (int)$id_konselor;
+                $data_konselor = $koneksi->query("SELECT nama_konselor, email FROM konselor WHERE id_konselor = '$id_konselor_safe'")->fetch_assoc();
+
+                // Ambil nama pegawai
+                $nama_pegawai = $_SESSION['nama_lengkap'] ?? $nip;
+
+                if ($data_konselor && !empty($data_konselor['email'])) {
+                    $emailLib->kirimNotifikasiKonselor(
+                        $data_konselor['email'],
+                        $data_konselor['nama_konselor'],
+                        $id_konsultasi,
+                        $nama_pegawai,
+                        $judul,
+                        $_POST['deskripsi'],
+                        $tanggal_pengajuan
+                    );
+                }
+            }
+
             $_SESSION['pesan'] = "Konsultasi berhasil dikirim! Kode: $id_konsultasi";
             echo "<script>window.location.replace('../index.php');</script>";
         } else {

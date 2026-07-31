@@ -90,6 +90,17 @@ $users_konselor = $koneksi->query("
                                             </div>
                                         </div>
                                         <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Email</label>
+                                            <div class="col-sm-10">
+                                                <input type="email" class="form-control" name="email"
+                                                    value="<?= htmlspecialchars($row['email'] ?? '')?>" 
+                                                    placeholder="email@contoh.com">
+                                                <small class="form-text text-muted">
+                                                    Email digunakan untuk mengirim notifikasi pengajuan konsultasi baru.
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Status</label>
                                             <div class="col-sm-10">
                                                 <select class="form-control" name="status" required>
@@ -146,11 +157,12 @@ if (isset($_POST['submit'])) {
     $nama_konselor = $koneksi->real_escape_string($_POST['nama_konselor']);
     $jabatan_konselor = $koneksi->real_escape_string($_POST['jabatan_konselor']);
     $keahlian = $koneksi->real_escape_string($_POST['keahlian']);
+    $email = $koneksi->real_escape_string($_POST['email'] ?? '');
     $status = $koneksi->real_escape_string($_POST['status']);
     $id_user = !empty($_POST['id_user']) ? (int)$_POST['id_user'] : null;
 
     $id_user_val = is_null($id_user) ? 'NULL' : "'$id_user'";
-    $submit = $koneksi->query("UPDATE konselor SET nama_konselor='$nama_konselor', jabatan_konselor='$jabatan_konselor', keahlian='$keahlian', status='$status', id_user=$id_user_val WHERE id_konselor='$id'");
+    $submit = $koneksi->query("UPDATE konselor SET nama_konselor='$nama_konselor', jabatan_konselor='$jabatan_konselor', keahlian='$keahlian', email='$email', status='$status', id_user=$id_user_val WHERE id_konselor='$id'");
 
     if ($submit) {
         $_SESSION['pesan'] = "Data Berhasil Diubah";
