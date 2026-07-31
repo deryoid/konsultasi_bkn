@@ -1,88 +1,56 @@
 <?php
 /**
- * Test Email
- * File ini untuk testing pengiriman email
- *
- * CARA MENGGUNAKAN:
- * 1. Pastikan sudah konfigurasi config/smtp_config.php
- * 2. Buka browser: http://localhost/konsultasi_bkn/test_email.php
- * 3. atau jalankan via terminal: php test_email.php
+ * Script Test Email - Konsultasi BKN
+ * Jalankan via browser: http://konsultasi_bkn.test/test_email.php
  */
 
-require 'config/config.php';
-require 'config/koneksi.php';
-require 'config/email.php';
+require_once __DIR__ . '/config/email.php';
 
-// Buat instance EmailLibrary
-$emailLib = new EmailLibrary();
+echo "<h2>🧪 Test Email - Sistem Konsultasi BKN</h2>";
 
-echo "====================================\n";
-echo "   TEST EMAIL NOTIFIKASI\n";
-echo "====================================\n\n";
+$email_lib = new EmailLibrary();
 
-// Test 1: Kirim notifikasi status
-echo "Test 1: Kirim Notifikasi Status\n";
-echo "--------------------------------\n";
-
-$test1 = $emailLib->kirimNotifikasiStatus(
-    'test@example.com',  // Ganti dengan email tujuan
-    'Hajji Sirajuddin',
-    'KNS00001',
-    'Menunggu',
-    'Diproses',
-    'Pertanyaan tentang Kenaikan Pangkat'
+// Test 1: Notifikasi Status
+echo "<h3>Test 1: Notifikasi Perubahan Status</h3>";
+$result1 = $email_lib->kirimNotifikasiStatus(
+    'bkn.kalsel8@gmail.com',   // email tujuan
+    'User Test',                // nama penerima
+    'KSL-2024-001',            // ID konsultasi
+    'Menunggu',                 // status lama
+    'Diproses',                 // status baru
+    'Test Konsultasi Kepegawaian' // judul
 );
+echo $result1 ? "✅ <strong>Berhasil dikirim!</strong>" : "❌ <strong>Gagal dikirim!</strong>";
 
-if ($test1) {
-    echo "✅ Notifikasi status BERHASIL dikirim!\n";
-} else {
-    echo "❌ Gagal mengirim notifikasi status.\n";
-    echo "   Cek error log untuk detail.\n";
-}
+echo "<br><br>";
 
-echo "\n";
-
-// Test 2: Kirim notifikasi respon
-echo "Test 2: Kirim Notifikasi Respon\n";
-echo "--------------------------------\n";
-
-$test2 = $emailLib->kirimNotifikasiRespon(
-    'test@example.com',  // Ganti dengan email tujuan
-    'Hajji Sirajuddin',
-    'KNS00001',
-    'Dr. Budi Santoso',
-    'Terima kasih atas pertanyaan Anda. Mengenai kenaikan pangkat, silakan melampirkan SK terakhir.'
+// Test 2: Notifikasi Konselor
+echo "<h3>Test 2: Notifikasi ke Konselor</h3>";
+$result2 = $email_lib->kirimNotifikasiKonselor(
+    'bkn.kalsel8@gmail.com',         // email konselor
+    'Konselor Test',                  // nama konselor
+    'KSL-2024-001',                  // ID konsultasi
+    'Pegawai Test',                   // nama pegawai
+    'Test Konsultasi Kepegawaian',   // judul
+    'Ini adalah deskripsi test konsultasi untuk pengujian sistem email.', // deskripsi
+    date('d-m-Y H:i:s')             // tanggal
 );
+echo $result2 ? "✅ <strong>Berhasil dikirim!</strong>" : "❌ <strong>Gagal dikirim!</strong>";
 
-if ($test2) {
-    echo "✅ Notifikasi respon BERHASIL dikirim!\n";
-} else {
-    echo "❌ Gagal mengirim notifikasi respon.\n";
-    echo "   Cek error log untuk detail.\n";
-}
+echo "<br><br>";
 
-echo "\n";
-echo "====================================\n";
-echo "   TEST SELESAI\n";
-echo "====================================\n\n";
+// Test 3: Notifikasi Respon
+echo "<h3>Test 3: Notifikasi Respon Konselor</h3>";
+$result3 = $email_lib->kirimNotifikasiRespon(
+    'bkn.kalsel8@gmail.com',        // email tujuan
+    'User Test',                     // nama penerima
+    'KSL-2024-001',                 // ID konsultasi
+    'Konselor Test',                 // nama konselor
+    'Ini adalah test respon dari konselor untuk pengujian sistem email.' // isi respon
+);
+echo $result3 ? "✅ <strong>Berhasil dikirim!</strong>" : "❌ <strong>Gagal dikirim!</strong>";
 
-echo "CATATAN:\n";
-echo "- Jika gagal, pastikan konfigurasi SMTP sudah benar\n";
-echo "- Cek file: config/smtp_config.php\n";
-echo "- Error log tersimpan di: error_log()\n\n";
-
-echo "KONFIGURASI SMTP:\n";
-echo "Host: smtp.gmail.com\n";
-echo "Port: 587 (TLS)\n";
-echo "Username: email@gmail.com\n";
-echo "Password: App Password (16 digit)\n\n";
-
-// Tampilkan konfigurasi saat ini
-if (file_exists('config/smtp_config.php')) {
-    $config = require 'config/smtp_config.php';
-    echo "KONFIGURASI SAAT INI:\n";
-    echo "Email: " . $config['username'] . "\n";
-    echo "From: " . $config['from_email'] . "\n";
-    echo "Encryption: " . $config['encryption'] . "\n";
-}
+echo "<br><br><hr>";
+echo "<p><small>Config SMTP: smtp.gmail.com:587 | From: bkn.kalsel8@gmail.com</small></p>";
+echo "<p><a href='javascript:history.back()'>← Kembali</a></p>";
 ?>
